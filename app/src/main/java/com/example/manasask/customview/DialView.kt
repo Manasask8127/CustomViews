@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.withStyledAttributes
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -24,6 +25,10 @@ private enum class FanSpeed(val label: Int) {
 
 private const val RADIUS_OFFSET_LABEL = 30
 private const val RADIUS_OFFSET_INDICATOR = -35
+
+private var fanSpeedLowColor = 0
+private var fanSpeedMediumColor = 0
+private var fanSeedMaxColor = 0
 
 class DialView @JvmOverloads constructor(
     context: Context,
@@ -46,6 +51,12 @@ class DialView @JvmOverloads constructor(
 
     init {
         isClickable = true
+
+        context.withStyledAttributes(attrs, R.styleable.DialView) {
+            fanSpeedLowColor = getColor(R.styleable.DialView_fanColor1, 0)
+            fanSpeedMediumColor = getColor(R.styleable.DialView_fanColor2, 0)
+            fanSeedMaxColor = getColor(R.styleable.DialView_fanColor3, 0)
+        }
     }
 
     override fun performClick(): Boolean {
@@ -92,6 +103,11 @@ class DialView @JvmOverloads constructor(
             canvas?.drawText(label, pointPosition.x, pointPosition.y, paint)
         }
 
-
+        paint.color = when (fanSpeed) {
+            FanSpeed.OFF -> Color.GRAY
+            FanSpeed.LOW -> fanSpeedLowColor
+            FanSpeed.MEDIUM -> fanSpeedMediumColor
+            FanSpeed.HIGH -> fanSeedMaxColor
+        } as Int
     }
 }
